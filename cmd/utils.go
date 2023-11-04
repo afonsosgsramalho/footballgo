@@ -4,6 +4,8 @@ import (
 	"footgo/config"
 	"io"
 	"net/http"
+
+	"github.com/fatih/color"
 )
 
 func getData(endpoint string) ([]byte, error) {
@@ -32,4 +34,16 @@ func getData(endpoint string) ([]byte, error) {
 	}
 
 	return responseBytes, nil
+}
+
+func createHeader() {
+	color.Green(
+		` 
+			  _____                __     ____          
+			_/ ____\____    ____ _/  |_  / ___\  ____   
+			\   __\/  _ \  /  _ \\   __\/ /_/ > /  _ \  
+			|  |  (  <_> )(  <_> )|  |  \___  /(  <_> ) 
+			|__|   \____/  \____/ |__| /_____/  \____/	
+                                                                     
+		`)
 }

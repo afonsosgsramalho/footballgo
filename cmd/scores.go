@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -13,6 +10,7 @@ import (
 )
 
 var liveFlag bool
+var teamFlag bool
 
 // scoresCmd represents the scores command
 var scoresCmd = &cobra.Command{
@@ -20,8 +18,12 @@ var scoresCmd = &cobra.Command{
 	Short: "Get scores of past and live fixtures",
 	Long:  `Get scores of past and live fixtures from footgo`,
 	Run: func(cmd *cobra.Command, args []string) {
+		createHeader()
 		if liveFlag {
-			getScores()
+			getScoresLive()
+		}
+		if teamFlag {
+			getScoresForTeam(args[len(args)-1])
 		}
 	},
 }
@@ -30,12 +32,44 @@ func init() {
 	rootCmd.AddCommand(scoresCmd)
 
 	// Add a required flag
-	scoresCmd.Flags().BoolVarP(&liveFlag, "live", "l", false, "A required flag")
-	scoresCmd.MarkFlagRequired("live")
+	scoresCmd.Flags().BoolVarP(&liveFlag, "live", "l", false, "Live flag")
+	scoresCmd.Flags().BoolVarP(&teamFlag, "team", "t", false, "Team flag")
 }
 
-func getScores() {
-	responseBytes, err := getData("/matches?status=LIVE")
+func getScoresForTeam(team string) {
+	responseBytesFin, err := getData("teams/" + team + "/matches?status=FINISHED")
+	if err != nil {
+		panic(err)
+	}
+
+	var matchesFin datastructures.Match
+	err = json.Unmarshal(responseBytesFin, &matchesFin)
+	if err != nil {
+		log.Printf("Could not unmarshal response - %v", err)
+	}
+
+	responseBytesLive, err := getData("teams/" + team + "/matches?status=LIVE")
+	if err != nil {
+		panic(err)
+	}
+
+	var matchesLive datastructures.Match
+	err = json.Unmarshal(responseBytesLive, &matchesLive)
+	if err != nil {
+		log.Printf("Could not unmarshal response - %v", err)
+	}
+
+	for _, arg := range matchesFin.Matches {
+		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " 	vs	", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+	}
+	for _, arg := range matchesLive.Matches {
+		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " 	vs	", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+	}
+
+}
+
+func getScoresLive() {
+	responseBytes, err := getData("matches?status=LIVE")
 	if err != nil {
 		panic(err)
 	}
@@ -53,8 +87,4 @@ func getScores() {
 	for _, arg := range matches.Matches {
 		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " vs ", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
 	}
-}
-
-func isLive(game string) (bool, error) {
-	return true, nil
 }
