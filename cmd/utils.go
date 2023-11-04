@@ -8,6 +8,18 @@ import (
 	"github.com/fatih/color"
 )
 
+func createHeader() {
+	color.Green(
+		` 
+			  _____                __     ____          
+			_/ ____\____    ____ _/  |_  / ___\  ____   
+			\   __\/  _ \  /  _ \\   __\/ /_/ > /  _ \  
+			|  |  (  <_> )(  <_> )|  |  \___  /(  <_> ) 
+			|__|   \____/  \____/ |__| /_____/  \____/	
+																	 
+		`)
+}
+
 func getData(endpoint string) ([]byte, error) {
 	endpointAux := config.APIEndpoint + endpoint
 	request, err := http.NewRequest(http.MethodGet, endpointAux, nil)
@@ -34,16 +46,4 @@ func getData(endpoint string) ([]byte, error) {
 	}
 
 	return responseBytes, nil
-}
-
-func createHeader() {
-	color.Green(
-		` 
-			  _____                __     ____          
-			_/ ____\____    ____ _/  |_  / ___\  ____   
-			\   __\/  _ \  /  _ \\   __\/ /_/ > /  _ \  
-			|  |  (  <_> )(  <_> )|  |  \___  /(  <_> ) 
-			|__|   \____/  \____/ |__| /_____/  \____/	
-                                                                     
-		`)
 }
