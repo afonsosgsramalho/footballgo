@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"footgo/config"
+	"footgo/internal/datastructures"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/fatih/color"
 )
@@ -46,4 +49,32 @@ func getData(endpoint string) ([]byte, error) {
 	}
 
 	return responseBytes, nil
+}
+
+func getClubs() map[string]string {
+	m := make(map[string]string)
+
+	responseBytes, err := getData("teams/")
+	if err != nil {
+		panic(err)
+	}
+
+	var team datastructures.Team
+	err = json.Unmarshal(responseBytes, &team)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, arg := range team.Teams {
+		m[strconv.Itoa(arg.ID)] = arg.Name
+		m[strconv.Itoa(arg.ID)] = arg.ShortName
+	}
+
+	return m
+
+}
+
+func convertClubinId(club string) string {
+	clubs := getClubs()
+	return clubs[club]
 }

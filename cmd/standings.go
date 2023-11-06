@@ -16,6 +16,7 @@ var standingsCmd = &cobra.Command{
 	Short: "football standings",
 	Long:  `Get standings of particular league`,
 	Run: func(cmd *cobra.Command, args []string) {
+		createHeader()
 		if standingsFlag {
 			getStandings("2021")
 		} else {
