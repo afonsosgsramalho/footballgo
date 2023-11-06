@@ -65,16 +65,47 @@ func getClubs() map[string]string {
 		panic(err)
 	}
 
+	// Add not only names but also codes
 	for _, arg := range team.Teams {
-		m[strconv.Itoa(arg.ID)] = arg.Name
-		m[strconv.Itoa(arg.ID)] = arg.ShortName
+		m[arg.Name] = strconv.Itoa(arg.ID)
+		m[arg.ShortName] = strconv.Itoa(arg.ID)
 	}
 
 	return m
 
 }
 
-func convertClubinId(club string) string {
+func getLeagues() map[string]string {
+	m := make(map[string]string)
+
+	responseBytes, err := getData("competitions/")
+	if err != nil {
+		panic(err)
+	}
+
+	var competition datastructures.Competition
+	err = json.Unmarshal(responseBytes, &competition)
+	if err != nil {
+		panic(err)
+	}
+
+	// Add not only names but also codes
+	for _, arg := range competition.Competitions {
+		m[arg.Name] = strconv.Itoa(arg.ID)
+		m[arg.Code] = strconv.Itoa(arg.ID)
+	}
+
+	return m
+}
+
+// TODO: cache the results, intead always querying API
+func convertClubId(club string) string {
 	clubs := getClubs()
 	return clubs[club]
+}
+
+// TODO: cache the results, intead always querying API
+func convertCompetitionId(competition string) string {
+	competitions := getLeagues()
+	return competitions[competition]
 }

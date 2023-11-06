@@ -17,8 +17,11 @@ var standingsCmd = &cobra.Command{
 	Long:  `Get standings of particular league`,
 	Run: func(cmd *cobra.Command, args []string) {
 		createHeader()
+		var league string
+
 		if standingsFlag {
-			getStandings("2021")
+			league = convertCompetitionId(args[len(args)-1])
+			getStandings(league)
 		} else {
 			fmt.Println("Provide argument")
 		}
@@ -29,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(standingsCmd)
 
 	standingsCmd.Flags().BoolVarP(&standingsFlag, "standings", "s", false, "Standings flag")
+	standingsCmd.MarkFlagRequired("standings")
 }
 
 func getStandings(team string) {
