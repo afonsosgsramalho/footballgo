@@ -90,6 +90,7 @@ func getClubs() map[string]string {
 	return m
 }
 
+// leagues
 func getLeagues() map[string]string {
 	m := make(map[string]string)
 
