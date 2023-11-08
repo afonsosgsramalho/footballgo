@@ -51,28 +51,43 @@ func getData(endpoint string) ([]byte, error) {
 	return responseBytes, nil
 }
 
-func getClubs() map[string]string {
-	m := make(map[string]string)
+// Define a function to fetch competition data for a given competition code.
+func getCompetitionData(compCode string) (*datastructures.Team, error) {
+	url := "competitions/" + compCode + "/teams"
 
-	responseBytes, err := getData("teams/")
+	responseBytes, err := getData(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var team datastructures.Team
 	err = json.Unmarshal(responseBytes, &team)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	// Add not only names but also codes
-	for _, arg := range team.Teams {
-		m[arg.Name] = strconv.Itoa(arg.ID)
-		m[arg.ShortName] = strconv.Itoa(arg.ID)
+	return &team, nil
+}
+
+func getClubs() map[string]string {
+	m := make(map[string]string)
+
+	comps := [3]string{"CL", "PPL", "PL"} //, "DED", "ABL", "FL1"} //"SA", "PD", "ELC", "BSA", "WC", "EC"}
+
+	for _, compCode := range comps {
+		competition, err := getCompetitionData(compCode)
+		if err != nil {
+			panic(err)
+		}
+
+		// Add not only names but also codes
+		for _, arg := range competition.Teams {
+			m[arg.Name] = strconv.Itoa(arg.ID)
+			m[arg.ShortName] = strconv.Itoa(arg.ID)
+		}
 	}
 
 	return m
-
 }
 
 func getLeagues() map[string]string {

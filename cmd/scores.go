@@ -19,11 +19,14 @@ var scoresCmd = &cobra.Command{
 	Long:  `Get scores of past and live fixtures from footgo`,
 	Run: func(cmd *cobra.Command, args []string) {
 		createHeader()
+		var team string
+
 		if liveFlag {
 			getScoresLive()
 		}
 		if teamFlag {
-			getScoresForTeam(args[len(args)-1])
+			team = convertClubId(args[len(args)-1])
+			getScoresForTeam(team)
 		}
 	},
 }

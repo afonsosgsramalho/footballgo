@@ -3,12 +3,6 @@ package datastructures
 import "time"
 
 type Team struct {
-	Count   int `json:"count"`
-	Filters struct {
-		Limit      int    `json:"limit"`
-		Offset     int    `json:"offset"`
-		Permission string `json:"permission"`
-	} `json:"filters"`
 	Teams []struct {
 		ID          int       `json:"id"`
 		Name        string    `json:"name"`

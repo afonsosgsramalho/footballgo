@@ -35,8 +35,8 @@ func init() {
 	standingsCmd.MarkFlagRequired("standings")
 }
 
-func getStandings(team string) {
-	responseBytes, err := getData("competitions/" + team + "/standings")
+func getStandings(competition string) {
+	responseBytes, err := getData("competitions/" + competition + "/standings")
 	if err != nil {
 		panic(err)
 	}
