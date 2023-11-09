@@ -5,7 +5,9 @@ import (
 	"footgo/config"
 	"footgo/internal/datastructures"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/fatih/color"
@@ -124,4 +126,19 @@ func convertClubId(club string) string {
 func convertCompetitionId(competition string) string {
 	competitions := getLeagues()
 	return competitions[competition]
+}
+
+func exportFile(path string, lines []string) {
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	for _, line := range lines {
+		_, err := f.WriteString(line + "\n")
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
