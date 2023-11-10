@@ -11,7 +11,7 @@ import (
 
 var leagueFlagFixtures bool
 var teamFlagFixtures bool
-var export bool
+var exportFixtures bool
 
 // fixturesCmd represents the fixtures command
 var fixturesCmd = &cobra.Command{
@@ -19,15 +19,6 @@ var fixturesCmd = &cobra.Command{
 	Short: "football fixtures",
 	Long:  `Get upcoming and past fixtures of a league and team`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if leagueFlagFixtures && export {
-			lines := fixturesCompetition("2017")
-			exportFile(args[len(args)-1], lines)
-		}
-		if teamFlagFixtures && export {
-			fmt.Println(args)
-			lines := fixturesTeam("5543")
-			exportFile(args[len(args)-1], lines)
-		}
 		if leagueFlagFixtures {
 			fixturesCompetition("2017")
 		}
@@ -42,10 +33,10 @@ func init() {
 
 	fixturesCmd.Flags().BoolVarP(&leagueFlagFixtures, "leagues", "l", false, "League flag")
 	fixturesCmd.Flags().BoolVarP(&teamFlagFixtures, "teams", "t", false, "Team flag")
-	fixturesCmd.Flags().BoolVarP(&export, "export", "e", false, "Export flag")
+	fixturesCmd.Flags().BoolVarP(&exportFixtures, "export", "e", false, "Export flag")
 }
 
-func fixturesCompetition(comp string) []string {
+func fixturesCompetition(comp string) {
 	responseBytesFin, err := getData("competitions/" + comp + "/matches?status=SCHEDULED")
 	if err != nil {
 		panic(err)
@@ -65,10 +56,12 @@ func fixturesCompetition(comp string) []string {
 		fmt.Println(tmp_string)
 	}
 
-	return lines
+	if exportFixtures {
+		exportFile("fixturesCompetition"+comp+".txt", lines)
+	}
 }
 
-func fixturesTeam(team string) []string {
+func fixturesTeam(team string) {
 	responseBytesFin, err := getData("teams/" + team + "/matches?status=SCHEDULED")
 	if err != nil {
 		panic(err)
@@ -88,5 +81,7 @@ func fixturesTeam(team string) []string {
 		fmt.Println(tmp_string)
 	}
 
-	return lines
+	if exportFixtures {
+		exportFile("fixturesTeam"+team+".txt", lines)
+	}
 }

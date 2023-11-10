@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"footgo/internal/datastructures"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
 
 var standingsFlag bool
+var exportStandings bool
 
 // standingsCmd represents the standings command
 var standingsCmd = &cobra.Command{
@@ -33,6 +35,8 @@ func init() {
 
 	standingsCmd.Flags().BoolVarP(&standingsFlag, "standings", "s", false, "Standings flag")
 	standingsCmd.MarkFlagRequired("standings")
+	standingsCmd.Flags().BoolVarP(&exportStandings, "export", "e", false, "Export flag")
+
 }
 
 func getStandings(competition string) {
@@ -40,6 +44,8 @@ func getStandings(competition string) {
 	if err != nil {
 		panic(err)
 	}
+
+	lines := make([]string, 0)
 
 	var standings datastructures.Standings
 	err = json.Unmarshal(responseBytes, &standings)
@@ -49,7 +55,13 @@ func getStandings(competition string) {
 
 	for _, arg := range standings.Standings {
 		for _, arg2 := range arg.Table {
-			fmt.Println(arg2.Position, arg2.Team.ShortName)
+			tmp_string := strconv.Itoa(arg2.Position) + " " + arg2.Team.ShortName
+			lines = append(lines, tmp_string)
+			fmt.Println(lines)
 		}
+	}
+
+	if exportStandings {
+		exportFile("StandingsCompetition"+competition+".txt", lines)
 	}
 }

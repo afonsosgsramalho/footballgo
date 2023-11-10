@@ -14,6 +14,7 @@ import (
 var liveFlag bool
 var teamFlag bool
 var daysFlag bool
+var exportScores bool
 
 // var daysFlag bool
 
@@ -54,6 +55,8 @@ func init() {
 	scoresCmd.Flags().BoolVarP(&liveFlag, "live", "l", false, "Live flag")
 	scoresCmd.Flags().BoolVarP(&teamFlag, "team", "t", false, "Team flag")
 	scoresCmd.Flags().BoolVarP(&daysFlag, "days", "d", false, "Days flag")
+	scoresCmd.Flags().BoolVarP(&exportScores, "export", "e", false, "Export flag")
+
 }
 
 func getScoresForTeam(team string) {
@@ -61,6 +64,8 @@ func getScoresForTeam(team string) {
 	if err != nil {
 		panic(err)
 	}
+
+	lines := make([]string, 0)
 
 	var matchesFin datastructures.Match
 	err = json.Unmarshal(responseBytesFin, &matchesFin)
@@ -80,12 +85,19 @@ func getScoresForTeam(team string) {
 	}
 
 	for _, arg := range matchesFin.Matches {
-		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " 	vs	", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
+		lines = append(lines, tmp_string)
+		fmt.Println(tmp_string)
 	}
 	for _, arg := range matchesLive.Matches {
-		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " 	vs	", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
+		lines = append(lines, tmp_string)
+		fmt.Println(tmp_string)
 	}
 
+	if exportScores {
+		exportFile("scoresTeam"+team+".txt", lines)
+	}
 }
 
 func getScoresLive() {
@@ -93,6 +105,8 @@ func getScoresLive() {
 	if err != nil {
 		panic(err)
 	}
+
+	lines := make([]string, 0)
 
 	var matches datastructures.Match
 	err = json.Unmarshal(responseBytes, &matches) // Use = instead of :=
@@ -105,16 +119,23 @@ func getScoresLive() {
 	}
 
 	for _, arg := range matches.Matches {
-		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " vs ", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
+		lines = append(lines, tmp_string)
+		fmt.Println(tmp_string)
+	}
+
+	if exportScores {
+		exportFile("scoresLive.txt", lines)
 	}
 }
 
 func getScoresByDate(date string) {
-	//TODO finish this shit
 	responseBytesFin, err := getData("matches?date=" + date)
 	if err != nil {
 		panic(err)
 	}
+
+	lines := make([]string, 0)
 
 	var matchesFin datastructures.Match
 	err = json.Unmarshal(responseBytesFin, &matchesFin)
@@ -123,7 +144,13 @@ func getScoresByDate(date string) {
 	}
 
 	for _, arg := range matchesFin.Matches {
-		fmt.Println(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, " 	vs	", arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
+		lines = append(lines, tmp_string)
+		fmt.Println(tmp_string)
+	}
+
+	if exportScores {
+		exportFile("scoresDate"+date+".txt", lines)
 	}
 
 }
