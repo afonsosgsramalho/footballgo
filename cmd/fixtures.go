@@ -19,6 +19,8 @@ var fixturesCmd = &cobra.Command{
 	Short: "football fixtures",
 	Long:  `Get upcoming and past fixtures of a league and team`,
 	Run: func(cmd *cobra.Command, args []string) {
+		createHeader()
+
 		if leagueFlagFixtures {
 			fixturesCompetition("2017")
 		}
