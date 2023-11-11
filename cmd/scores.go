@@ -152,5 +152,4 @@ func getScoresByDate(date string) {
 	if exportScores {
 		exportFile("scoresDate"+date+".txt", lines)
 	}
-
 }

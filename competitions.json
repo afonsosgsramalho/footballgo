@@ -1,0 +1,59 @@
+{
+    "competitions": [
+        {
+            "id": 2001,
+            "name": "Champions League",
+            "shortName": "CL"
+        },
+        {
+            "id": 2017,
+            "name": "Primeira Liga",
+            "shortName": "PPL"
+        },
+        {
+            "id": 2021,
+            "name": "Premier League",
+            "shortName": "PL"
+        },
+        {
+            "id": 2003,
+            "name": "Eredivisie",
+            "shortName": "DED"
+        },
+        {
+            "id": 2015,
+            "name": "Ligue 1",
+            "shortName": "FL1"
+        },
+        {
+            "id": 2019,
+            "name": "Serie A",
+            "shortName": "SA"
+        },
+        {
+            "id": 2014,
+            "name": "Primera Division",
+            "shortName": "PD"
+        },
+        {
+            "id": 2016,
+            "name": "Championship",
+            "shortName": "ELC"
+        },
+        {
+            "id": 2013,
+            "name": "Campeonato Brasileiro da Série A",
+            "shortName": "BSA"
+        },
+        {
+            "id": 2000,
+            "name": "World Cup",
+            "shortName": "WC"
+        },
+        {
+            "id": 2018,
+            "name": "European Championship",
+            "shortName": "EC"
+        }
+    ]
+}
