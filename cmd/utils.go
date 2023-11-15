@@ -2,13 +2,16 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"footgo/config"
 	"footgo/internal/datastructures"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -150,4 +153,46 @@ func indexOf(arr []string, val string) int {
 		}
 	}
 	return -1
+}
+
+func download_file(game_url string) {
+	// Build fileName from fullPath
+	fileURL, err := url.Parse(game_url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	path := fileURL.Path
+	segments := strings.Split(path, "/")
+	fileName := segments[len(segments)-1]
+	filePath := "/home/vboxuser/Videos/" + fileName
+	fmt.Println(filePath)
+
+	// Create blank file
+	file, err := os.Create(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	client := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+	// Put content on file
+	resp, err := client.Get(game_url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	size, err := io.Copy(file, resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+
+	fmt.Printf("Downloaded a file %s with size %d", fileName, size)
+	fmt.Print("\n")
+
 }
