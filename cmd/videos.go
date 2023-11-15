@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 */
->>>>>>> 111bb82dbadce9ebe449dd3ff6593fd240fae50e
 package cmd
 
 import (
@@ -15,13 +12,13 @@ import (
 // videosCmd represents the videos command
 var videosCmd = &cobra.Command{
 	Use:   "videos",
-<<<<<<< HEAD
-	Short: "game videos",
-	Long:  `Get videos of specific game for the current month, only if the video is available`,
-=======
-	Short: "team videos",
-	Long:  `Get videos of teams`,
->>>>>>> 111bb82dbadce9ebe449dd3ff6593fd240fae50e
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("videos called")
 	},
@@ -29,4 +26,14 @@ var videosCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(videosCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// videosCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// videosCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
