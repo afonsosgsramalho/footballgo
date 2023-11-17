@@ -164,8 +164,8 @@ func download_file(game_url string) {
 	path := fileURL.Path
 	segments := strings.Split(path, "/")
 	fileName := segments[len(segments)-1]
-	filePath := "/home/vboxuser/Videos/" + fileName
-	fmt.Println(filePath)
+	// filePath := "/home/vboxuser/Videos/" + fileName
+	filePath := fileName
 
 	// Create blank file
 	file, err := os.Create(filePath)
@@ -192,7 +192,7 @@ func download_file(game_url string) {
 
 	defer file.Close()
 
-	fmt.Printf("Downloaded a file %s with size %d", fileName, size)
+	fmt.Printf("Downloaded file %s with size %d %s", fileName, size/(1<<20), "MB")
 	fmt.Print("\n")
 
 }
