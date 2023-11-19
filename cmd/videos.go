@@ -109,7 +109,7 @@ func scrapeMonth(game string) {
 		}
 	}
 
-	teste_url := "https://sportdaylight.com/wp-content/uploads/2023/04/"
+	teste_url := "https://sportdaylight.com/wp-content/uploads/2023/11/"
 	mp4_links := make([]string, 0)
 
 	// Instantiate default collector
@@ -138,12 +138,25 @@ func scrapeMonth(game string) {
 	game_converted := parseGame(game)
 	fmt.Println(game_converted, "converted")
 
-	// Choose a set of bag sizes, more is more accurate but slower
+	// Closest match
 	bagSizes := []int{2}
-	// Create a closestmatch object
 	cm := closestmatch.New(keys, bagSizes)
 	closest := cm.Closest(game_converted)
 	fmt.Println(cm.Closest(closest), "closest")
+
+	word_sim := distance_words_ratio(game_converted, closest)
+	if word_sim < 0.7 {
+		fmt.Println("No matching game")
+		return
+	}
+	fmt.Println(word_sim)
+
+	// words_acc := make([]string, 0, 2)
+	// words_acc = append(words_acc, game_converted)
+	// words_acc = append(words_acc, closest)
+	// cm2 := closestmatch.New(words_acc, bagSizes)
+	// fmt.Println(cm2.AccuracyMutatingWords())
+	// fmt.Println(words_acc)
 
 	// Download the file
 	download_file("https://sportdaylight.com" + parsedLinks[closest])
