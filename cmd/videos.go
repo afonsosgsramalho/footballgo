@@ -151,13 +151,6 @@ func scrapeMonth(game string) {
 	}
 	fmt.Println(word_sim)
 
-	// words_acc := make([]string, 0, 2)
-	// words_acc = append(words_acc, game_converted)
-	// words_acc = append(words_acc, closest)
-	// cm2 := closestmatch.New(words_acc, bagSizes)
-	// fmt.Println(cm2.AccuracyMutatingWords())
-	// fmt.Println(words_acc)
-
 	// Download the file
 	download_file("https://sportdaylight.com" + parsedLinks[closest])
 }

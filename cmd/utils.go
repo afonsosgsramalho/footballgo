@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/schollz/progressbar/v3"
 )
 
 func createHeader() {
@@ -178,14 +179,19 @@ func download_file(game_url string) {
 			return nil
 		},
 	}
-	// Put content on file
 	resp, err := client.Get(game_url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	size, err := io.Copy(file, resp.Body)
+	// Put content on file
+	bar := progressbar.DefaultBytes(
+		resp.ContentLength,
+		"downloading",
+	)
+
+	size, err := io.Copy(io.MultiWriter(file, bar), resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -205,7 +211,7 @@ func word_similarity_Levenshtein(word1 string, word2 string) int {
 
 	for i := 1; i <= len(word1); i++ {
 		cur[0] = 1
-		for j := 1; j <= len(word2); j++ {
+		for j := 1; j < len(pre); j++ {
 			if word1[i-1] != word2[j-1] {
 				cur[j] = min(cur[j-1], pre[j-1], pre[j]) + 1
 			} else {
