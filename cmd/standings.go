@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"footgo/internal/datastructures"
+	"footgo/utilitaries"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -18,11 +19,11 @@ var standingsCmd = &cobra.Command{
 	Short: "football standings",
 	Long:  `Get standings of particular league`,
 	Run: func(cmd *cobra.Command, args []string) {
-		createHeader()
+		utilitaries.CreateHeader()
 		var league string
 
 		if standingsFlag {
-			league = convertCompetitionId(args[len(args)-1])
+			league = utilitaries.ConvertCompetitionId(args[len(args)-1])
 			getStandings(league)
 		} else {
 			fmt.Println("Provide argument")
@@ -40,7 +41,7 @@ func init() {
 }
 
 func getStandings(competition string) {
-	responseBytes, err := getData("competitions/" + competition + "/standings")
+	responseBytes, err := utilitaries.GetData("competitions/" + competition + "/standings")
 	if err != nil {
 		panic(err)
 	}
@@ -62,6 +63,6 @@ func getStandings(competition string) {
 	}
 
 	if exportStandings {
-		exportFile("StandingsCompetition"+competition+".txt", lines)
+		utilitaries.ExportFile("StandingsCompetition"+competition+".txt", lines)
 	}
 }

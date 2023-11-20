@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"footgo/internal/datastructures"
+	"footgo/utilitaries"
 	"log"
 	"strconv"
 	"time"
@@ -24,19 +25,19 @@ var scoresCmd = &cobra.Command{
 	Short: "Get scores of past and live fixtures",
 	Long:  `Get scores of past and live fixtures from footgo`,
 	Run: func(cmd *cobra.Command, args []string) {
-		createHeader()
+		utilitaries.CreateHeader()
 
 		if liveFlag {
 			getScoresLive()
 		}
 		if teamFlag {
-			teamTerm := args[indexOf(args, "-t")+1]
-			team := convertClubId(teamTerm)
+			teamTerm := args[utilitaries.IndexOf(args, "-t")+1]
+			team := utilitaries.ConvertClubId(teamTerm)
 			getScoresForTeam(team)
 		}
 		if daysFlag {
 			//get days
-			days_str := args[indexOf(args, "d")+1]
+			days_str := args[utilitaries.IndexOf(args, "d")+1]
 			days_int, _ := strconv.Atoi(days_str)
 			//get current date
 			data := time.Now()
@@ -60,7 +61,7 @@ func init() {
 }
 
 func getScoresForTeam(team string) {
-	responseBytesFin, err := getData("teams/" + team + "/matches?status=FINISHED")
+	responseBytesFin, err := utilitaries.GetData("teams/" + team + "/matches?status=FINISHED")
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +74,7 @@ func getScoresForTeam(team string) {
 		log.Printf("Could not unmarshal response - %v", err)
 	}
 
-	responseBytesLive, err := getData("teams/" + team + "/matches?status=LIVE")
+	responseBytesLive, err := utilitaries.GetData("teams/" + team + "/matches?status=LIVE")
 	if err != nil {
 		panic(err)
 	}
@@ -96,12 +97,12 @@ func getScoresForTeam(team string) {
 	}
 
 	if exportScores {
-		exportFile("scoresTeam"+team+".txt", lines)
+		utilitaries.ExportFile("scoresTeam"+team+".txt", lines)
 	}
 }
 
 func getScoresLive() {
-	responseBytes, err := getData("matches?status=LIVE")
+	responseBytes, err := utilitaries.GetData("matches?status=LIVE")
 	if err != nil {
 		panic(err)
 	}
@@ -125,12 +126,12 @@ func getScoresLive() {
 	}
 
 	if exportScores {
-		exportFile("scoresLive.txt", lines)
+		utilitaries.ExportFile("scoresLive.txt", lines)
 	}
 }
 
 func getScoresByDate(date string) {
-	responseBytesFin, err := getData("matches?date=" + date)
+	responseBytesFin, err := utilitaries.GetData("matches?date=" + date)
 	if err != nil {
 		panic(err)
 	}
@@ -150,6 +151,6 @@ func getScoresByDate(date string) {
 	}
 
 	if exportScores {
-		exportFile("scoresDate"+date+".txt", lines)
+		utilitaries.ExportFile("scoresDate"+date+".txt", lines)
 	}
 }
