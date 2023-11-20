@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -23,10 +24,16 @@ func PrintScores(homeTeam string, homeResult int, awayTeam string, awayResult in
 	return game
 }
 
-func PrintFixtures() string {
-	return "asdfsdf"
+func PrintFixtures(competition string, homeTeam string, awayTeam string, gameTime time.Time) string {
+	fixture := fmt.Sprintf("%s %s vs %s at %s \n", competition, homeTeam, awayTeam, gameTime.Format("2006-01-02 15:04"))
+	fmt.Fprintf(color.Output, "%s %s vs %s at %s \n", color.GreenString(competition), color.BlueString(homeTeam), color.RedString(awayTeam), color.YellowString(gameTime.Format("2006-01-02 15:04")))
+
+	return fixture
 }
 
-func PrintStandings() string {
-	return "asdfsdf"
+func PrintStandings(position string, team string, points string) string {
+	standing := fmt.Sprintf("%s %s with %s points \n", position, team, points)
+	fmt.Fprintf(color.Output, "%s %s with %s points \n", color.GreenString(position), color.BlueString(team), color.YellowString(points))
+
+	return standing
 }

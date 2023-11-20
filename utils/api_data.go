@@ -91,7 +91,7 @@ type Competitions struct {
 		ID        int    `json:"id"`
 		Name      string `json:"name"`
 		ShortName string `json:"shortName"`
-	} `json:"team"`
+	} `json:"competition"`
 }
 
 // leagues
@@ -101,8 +101,8 @@ func GetLeagues() map[string]string {
 		log.Fatal("Error when opening file: ", err)
 	}
 
-	var competitionsData Competitions
 	m := make(map[string]string)
+	var competitionsData Competitions
 	err = json.Unmarshal([]byte(jsonData), &competitionsData)
 	if err != nil {
 		log.Fatal("Error when opening file: ", err)

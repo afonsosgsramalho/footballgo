@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"footgo/internal/datastructures"
 	"footgo/utils"
 	"log"
@@ -22,10 +21,14 @@ var fixturesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
 		if leagueFlagFixtures {
-			fixturesCompetition("2017")
+			competitionTerm := args[utils.IndexOf(args, "-l")+1]
+			competition := utils.ConvertCompetitionId(competitionTerm)
+			fixturesCompetition(competition)
 		}
 		if teamFlagFixtures {
-			fixturesTeam("5543")
+			teamTerm := args[utils.IndexOf(args, "-t")+1]
+			team := utils.ConvertClubId(teamTerm)
+			fixturesTeam(team)
 		}
 	},
 }
@@ -53,9 +56,8 @@ func fixturesCompetition(comp string) {
 	}
 
 	for _, arg := range competition.Matches {
-		tmp_string := arg.Competition.Name + " " + arg.HomeTeam.ShortName + " vs " + arg.AwayTeam.ShortName + " at " + arg.UtcDate.Format("2006-01-02 15:04:05")
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		fixture := utils.PrintFixtures(arg.Competition.Name, arg.HomeTeam.ShortName, arg.AwayTeam.ShortName, arg.UtcDate)
+		lines = append(lines, fixture)
 	}
 
 	if exportFixtures {
@@ -78,9 +80,8 @@ func fixturesTeam(team string) {
 	}
 
 	for _, arg := range matches.Matches {
-		tmp_string := arg.Competition.Name + " " + arg.HomeTeam.ShortName + " vs " + arg.AwayTeam.ShortName + " at " + arg.UtcDate.Format("2006-01-02 15:04:05")
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		fixture := utils.PrintFixtures(arg.Competition.Name, arg.HomeTeam.ShortName, arg.AwayTeam.ShortName, arg.UtcDate)
+		lines = append(lines, fixture)
 	}
 
 	if exportFixtures {

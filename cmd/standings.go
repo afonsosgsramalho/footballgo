@@ -20,11 +20,11 @@ var standingsCmd = &cobra.Command{
 	Long:  `Get standings of particular league`,
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
-		var league string
 
 		if standingsFlag {
-			league = utils.ConvertCompetitionId(args[len(args)-1])
-			getStandings(league)
+			competitionTerm := args[utils.IndexOf(args, "-l")+1]
+			competition := utils.ConvertCompetitionId(competitionTerm)
+			getStandings(competition)
 		} else {
 			fmt.Println("Provide argument")
 		}
@@ -56,9 +56,8 @@ func getStandings(competition string) {
 
 	for _, arg := range standings.Standings {
 		for _, arg2 := range arg.Table {
-			tmp_string := strconv.Itoa(arg2.Position) + " " + arg2.Team.ShortName
-			lines = append(lines, tmp_string)
-			fmt.Println(lines)
+			fixture := utils.PrintStandings(strconv.Itoa(arg2.Position), arg2.Team.ShortName, strconv.Itoa(arg2.Points))
+			lines = append(lines, fixture)
 		}
 	}
 
