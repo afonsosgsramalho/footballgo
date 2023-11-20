@@ -1,4 +1,4 @@
-package utilitaries
+package utils
 
 func IndexOf(arr []string, val string) int {
 	for pos, v := range arr {

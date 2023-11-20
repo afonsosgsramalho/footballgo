@@ -1,4 +1,4 @@
-package utilitaries
+package utils
 
 func Word_similarity_Levenshtein(word1 string, word2 string) int {
 	pre := make([]int, len(word2)+1)

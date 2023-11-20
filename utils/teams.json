@@ -1,5 +1,5 @@
 {
-    "teams": [
+    "team": [
         {
             "id": 4,
             "name": "Borussia Dortmund",
@@ -52,12 +52,12 @@
         },
         {
             "id": 65,
-            "name": "Manchester City FC",
+            "name": "Manchester City",
             "shortName": "Man City"
         },
         {
             "id": 66,
-            "name": "Manchester United FC",
+            "name": "Manchester United",
             "shortName": "Man United"
         },
         {

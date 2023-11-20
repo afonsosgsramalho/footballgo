@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-	"footgo/utilitaries"
+	"footgo/utils"
 	"net/url"
 	"strconv"
 	"strings"
@@ -24,10 +24,10 @@ var videosCmd = &cobra.Command{
 	Short: "videos from games",
 	Long:  `Get videos from games of specific game`,
 	Run: func(cmd *cobra.Command, args []string) {
-		utilitaries.CreateHeader()
+		utils.CreateHeader()
 
 		if videoFlag {
-			gamearg := args[utilitaries.IndexOf(args, "-v")+1]
+			gamearg := args[utils.IndexOf(args, "-v")+1]
 			scrapeMonth(gamearg)
 		}
 	},
@@ -145,7 +145,7 @@ func scrapeMonth(game string) {
 	closest := cm.Closest(game_converted)
 	fmt.Println(cm.Closest(closest), "closest")
 
-	word_sim := utilitaries.Distance_words_ratio(game_converted, closest)
+	word_sim := utils.Distance_words_ratio(game_converted, closest)
 	if word_sim < 0.7 {
 		fmt.Println("No matching game")
 		return
@@ -153,5 +153,5 @@ func scrapeMonth(game string) {
 	fmt.Println(word_sim)
 
 	// Download the file
-	utilitaries.Download_file("https://sportdaylight.com" + parsedLinks[closest])
+	utils.Download_file("https://sportdaylight.com" + parsedLinks[closest])
 }

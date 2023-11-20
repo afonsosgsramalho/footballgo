@@ -1,11 +1,13 @@
-package utilitaries
+package utils
 
 import (
 	"encoding/json"
 	"footgo/config"
 	"footgo/internal/datastructures"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -55,46 +57,59 @@ func GetCompetitionData(compCode string) (*datastructures.Team, error) {
 	return &team, nil
 }
 
+type Teams struct {
+	Team []struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		ShortName string `json:"shortName"`
+	} `json:"team"`
+}
+
 func GetClubs() map[string]string {
+	jsonData, err := os.ReadFile("utils/teams.json")
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
+
 	m := make(map[string]string)
+	var teamsData Teams
+	err = json.Unmarshal([]byte(jsonData), &teamsData)
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
 
-	comps := [3]string{"CL", "PPL", "PL"} //, "DED", "ABL", "FL1"} //"SA", "PD", "ELC", "BSA", "WC", "EC"}
-
-	for _, compCode := range comps {
-		competition, err := GetCompetitionData(compCode)
-		if err != nil {
-			panic(err)
-		}
-
-		// Add not only names but also codes
-		for _, arg := range competition.Teams {
-			m[arg.Name] = strconv.Itoa(arg.ID)
-			m[arg.ShortName] = strconv.Itoa(arg.ID)
-		}
+	for _, team := range teamsData.Team {
+		m[team.Name] = strconv.Itoa(team.ID)
+		m[team.ShortName] = strconv.Itoa(team.ID)
 	}
 
 	return m
 }
 
+type Competitions struct {
+	Competition []struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		ShortName string `json:"shortName"`
+	} `json:"team"`
+}
+
 // leagues
 func GetLeagues() map[string]string {
+	jsonData, err := os.ReadFile("utils/competitions.json")
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
+
+	var competitionsData Competitions
 	m := make(map[string]string)
-
-	responseBytes, err := GetData("competitions/")
+	err = json.Unmarshal([]byte(jsonData), &competitionsData)
 	if err != nil {
-		panic(err)
+		log.Fatal("Error when opening file: ", err)
 	}
-
-	var competition datastructures.Competition
-	err = json.Unmarshal(responseBytes, &competition)
-	if err != nil {
-		panic(err)
-	}
-
-	// Add not only names but also codes
-	for _, arg := range competition.Competitions {
-		m[arg.Name] = strconv.Itoa(arg.ID)
-		m[arg.Code] = strconv.Itoa(arg.ID)
+	for _, comp := range competitionsData.Competition {
+		m[comp.Name] = strconv.Itoa(comp.ID)
+		m[comp.ShortName] = strconv.Itoa(comp.ID)
 	}
 
 	return m

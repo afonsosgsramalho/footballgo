@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"footgo/internal/datastructures"
-	"footgo/utilitaries"
+	"footgo/utils"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ var fixturesCmd = &cobra.Command{
 	Short: "football fixtures",
 	Long:  `Get upcoming and past fixtures of a league and team`,
 	Run: func(cmd *cobra.Command, args []string) {
-		utilitaries.CreateHeader()
+		utils.CreateHeader()
 		if leagueFlagFixtures {
 			fixturesCompetition("2017")
 		}
@@ -39,7 +39,7 @@ func init() {
 }
 
 func fixturesCompetition(comp string) {
-	responseBytesFin, err := utilitaries.GetData("competitions/" + comp + "/matches?status=SCHEDULED")
+	responseBytesFin, err := utils.GetData("competitions/" + comp + "/matches?status=SCHEDULED")
 	if err != nil {
 		panic(err)
 	}
@@ -59,12 +59,12 @@ func fixturesCompetition(comp string) {
 	}
 
 	if exportFixtures {
-		utilitaries.ExportFile("fixturesCompetition"+comp+".txt", lines)
+		utils.ExportFile("fixturesCompetition"+comp+".txt", lines)
 	}
 }
 
 func fixturesTeam(team string) {
-	responseBytesFin, err := utilitaries.GetData("teams/" + team + "/matches?status=SCHEDULED")
+	responseBytesFin, err := utils.GetData("teams/" + team + "/matches?status=SCHEDULED")
 	if err != nil {
 		panic(err)
 	}
@@ -84,6 +84,6 @@ func fixturesTeam(team string) {
 	}
 
 	if exportFixtures {
-		utilitaries.ExportFile("fixturesTeam"+team+".txt", lines)
+		utils.ExportFile("fixturesTeam"+team+".txt", lines)
 	}
 }

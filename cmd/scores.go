@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"footgo/internal/datastructures"
-	"footgo/utilitaries"
+	"footgo/utils"
 	"log"
 	"strconv"
 	"time"
@@ -17,27 +17,25 @@ var teamFlag bool
 var daysFlag bool
 var exportScores bool
 
-// var daysFlag bool
-
 // scoresCmd represents the scores command
 var scoresCmd = &cobra.Command{
 	Use:   "scores",
 	Short: "Get scores of past and live fixtures",
 	Long:  `Get scores of past and live fixtures from footgo`,
 	Run: func(cmd *cobra.Command, args []string) {
-		utilitaries.CreateHeader()
+		utils.CreateHeader()
 
 		if liveFlag {
 			getScoresLive()
 		}
 		if teamFlag {
-			teamTerm := args[utilitaries.IndexOf(args, "-t")+1]
-			team := utilitaries.ConvertClubId(teamTerm)
+			teamTerm := args[utils.IndexOf(args, "-t")+1]
+			team := utils.ConvertClubId(teamTerm)
 			getScoresForTeam(team)
 		}
 		if daysFlag {
 			//get days
-			days_str := args[utilitaries.IndexOf(args, "d")+1]
+			days_str := args[utils.IndexOf(args, "d")+1]
 			days_int, _ := strconv.Atoi(days_str)
 			//get current date
 			data := time.Now()
@@ -61,7 +59,7 @@ func init() {
 }
 
 func getScoresForTeam(team string) {
-	responseBytesFin, err := utilitaries.GetData("teams/" + team + "/matches?status=FINISHED")
+	responseBytesFin, err := utils.GetData("teams/" + team + "/matches?status=FINISHED")
 	if err != nil {
 		panic(err)
 	}
@@ -74,7 +72,7 @@ func getScoresForTeam(team string) {
 		log.Printf("Could not unmarshal response - %v", err)
 	}
 
-	responseBytesLive, err := utilitaries.GetData("teams/" + team + "/matches?status=LIVE")
+	responseBytesLive, err := utils.GetData("teams/" + team + "/matches?status=LIVE")
 	if err != nil {
 		panic(err)
 	}
@@ -86,23 +84,21 @@ func getScoresForTeam(team string) {
 	}
 
 	for _, arg := range matchesFin.Matches {
-		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		score := utils.PrintScores(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		lines = append(lines, score)
 	}
 	for _, arg := range matchesLive.Matches {
-		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		score := utils.PrintScores(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		lines = append(lines, score)
 	}
 
 	if exportScores {
-		utilitaries.ExportFile("scoresTeam"+team+".txt", lines)
+		utils.ExportFile("scoresTeam"+team+".txt", lines)
 	}
 }
 
 func getScoresLive() {
-	responseBytes, err := utilitaries.GetData("matches?status=LIVE")
+	responseBytes, err := utils.GetData("matches?status=LIVE")
 	if err != nil {
 		panic(err)
 	}
@@ -120,18 +116,17 @@ func getScoresLive() {
 	}
 
 	for _, arg := range matches.Matches {
-		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		score := utils.PrintScores(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		lines = append(lines, score)
 	}
 
 	if exportScores {
-		utilitaries.ExportFile("scoresLive.txt", lines)
+		utils.ExportFile("scoresLive.txt", lines)
 	}
 }
 
 func getScoresByDate(date string) {
-	responseBytesFin, err := utilitaries.GetData("matches?date=" + date)
+	responseBytesFin, err := utils.GetData("matches?date=" + date)
 	if err != nil {
 		panic(err)
 	}
@@ -145,12 +140,11 @@ func getScoresByDate(date string) {
 	}
 
 	for _, arg := range matchesFin.Matches {
-		tmp_string := arg.HomeTeam.ShortName + " " + strconv.Itoa(arg.Score.FullTime.Home) + " vs " + arg.AwayTeam.ShortName + strconv.Itoa(arg.Score.FullTime.Away)
-		lines = append(lines, tmp_string)
-		fmt.Println(tmp_string)
+		score := utils.PrintScores(arg.HomeTeam.ShortName, arg.Score.FullTime.Home, arg.AwayTeam.ShortName, arg.Score.FullTime.Away)
+		lines = append(lines, score)
 	}
 
 	if exportScores {
-		utilitaries.ExportFile("scoresDate"+date+".txt", lines)
+		utils.ExportFile("scoresDate"+date+".txt", lines)
 	}
 }
