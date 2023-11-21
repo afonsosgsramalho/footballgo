@@ -13,8 +13,8 @@ import (
 )
 
 var liveFlag bool
-var teamFlag bool
-var daysFlag bool
+var teamFlag string
+var daysFlag string
 var exportScores bool
 
 // scoresCmd represents the scores command
@@ -28,15 +28,12 @@ var scoresCmd = &cobra.Command{
 		if liveFlag {
 			getScoresLive()
 		}
-		if teamFlag {
-			teamTerm := args[utils.IndexOf(args, "-t")+1]
-			team := utils.ConvertClubId(teamTerm)
+		if teamFlag != "" {
+			team := utils.ConvertClubId(teamFlag)
 			getScoresForTeam(team)
 		}
-		if daysFlag {
-			//get days
-			days_str := args[utils.IndexOf(args, "d")+1]
-			days_int, _ := strconv.Atoi(days_str)
+		if daysFlag != "" {
+			days_int, _ := strconv.Atoi(daysFlag)
 			//get current date
 			data := time.Now()
 			//Subtract days
@@ -52,10 +49,8 @@ func init() {
 
 	// Add a required flag
 	scoresCmd.Flags().BoolVarP(&liveFlag, "live", "l", false, "Live flag")
-	scoresCmd.Flags().BoolVarP(&teamFlag, "team", "t", false, "Team flag")
-	scoresCmd.Flags().BoolVarP(&daysFlag, "days", "d", false, "Days flag")
-	scoresCmd.Flags().BoolVarP(&exportScores, "export", "e", false, "Export flag")
-
+	scoresCmd.Flags().StringVarP(&teamFlag, "team", "t", "", "Team flag")
+	scoresCmd.Flags().StringVarP(&daysFlag, "days", "d", "", "Days flag")
 }
 
 func getScoresForTeam(team string) {

@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var leagueFlagFixtures bool
-var teamFlagFixtures bool
+var leagueFlagFixtures string
+var teamFlagFixtures string
 var exportFixtures bool
 
 // fixturesCmd represents the fixtures command
@@ -20,14 +20,17 @@ var fixturesCmd = &cobra.Command{
 	Long:  `Get upcoming and past fixtures of a league and team`,
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
-		if leagueFlagFixtures {
-			competitionTerm := args[utils.IndexOf(args, "-l")+1]
-			competition := utils.ConvertCompetitionId(competitionTerm)
+
+		if len(args) == 0 {
+			log.Fatal("You have to provide at least on argument")
+		}
+
+		if leagueFlagFixtures != "" {
+			competition := utils.ConvertCompetitionId(leagueFlagFixtures)
 			fixturesCompetition(competition)
 		}
-		if teamFlagFixtures {
-			teamTerm := args[utils.IndexOf(args, "-t")+1]
-			team := utils.ConvertClubId(teamTerm)
+		if teamFlagFixtures != "" {
+			team := utils.ConvertClubId(teamFlagFixtures)
 			fixturesTeam(team)
 		}
 	},
@@ -36,8 +39,8 @@ var fixturesCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(fixturesCmd)
 
-	fixturesCmd.Flags().BoolVarP(&leagueFlagFixtures, "leagues", "l", false, "League flag")
-	fixturesCmd.Flags().BoolVarP(&teamFlagFixtures, "teams", "t", false, "Team flag")
+	fixturesCmd.Flags().StringVarP(&leagueFlagFixtures, "leagues", "l", "", "League flag")
+	fixturesCmd.Flags().StringVarP(&teamFlagFixtures, "teams", "t", "", "Team flag")
 	fixturesCmd.Flags().BoolVarP(&exportFixtures, "export", "e", false, "Export flag")
 }
 

@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"footgo/internal/datastructures"
 	"footgo/utils"
+	"log"
 	"strconv"
 
 	"github.com/spf13/cobra"
 )
 
-var standingsFlag bool
+var leagueFlag string
 var exportStandings bool
 
 // standingsCmd represents the standings command
@@ -21,12 +21,13 @@ var standingsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
 
-		if standingsFlag {
-			competitionTerm := args[utils.IndexOf(args, "-l")+1]
-			competition := utils.ConvertCompetitionId(competitionTerm)
+		if len(args) == 0 {
+			log.Fatal("You have to provide at least on argument")
+		}
+
+		if leagueFlag != "" {
+			competition := utils.ConvertCompetitionId(leagueFlag)
 			getStandings(competition)
-		} else {
-			fmt.Println("Provide argument")
 		}
 	},
 }
@@ -34,8 +35,8 @@ var standingsCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(standingsCmd)
 
-	standingsCmd.Flags().BoolVarP(&standingsFlag, "standings", "s", false, "Standings flag")
-	standingsCmd.MarkFlagRequired("standings")
+	standingsCmd.Flags().StringVarP(&leagueFlag, "league", "l", "", "League flag")
+	standingsCmd.MarkFlagRequired("league")
 	standingsCmd.Flags().BoolVarP(&exportStandings, "export", "e", false, "Export flag")
 
 }

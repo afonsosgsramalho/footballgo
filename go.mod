@@ -39,3 +39,8 @@ require (
 	github.com/schollz/progressbar/v3 v3.14.1 // direct
 	golang.org/x/term v0.14.0 // indirect
 )
+
+require (
+	github.com/alexeyco/simpletable v1.0.0 // indirect
+	github.com/mattn/go-runewidth v0.0.15 // indirect
+)
