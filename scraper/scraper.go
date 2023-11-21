@@ -2,58 +2,105 @@ package scraper
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"footgo/utils"
 	"net/url"
-	"os"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
+
+	"github.com/gocolly/colly"
+	"github.com/schollz/closestmatch"
 )
 
-func downloadFile(urlVideo string, folderPath interface{}) {
-	urlVideo = "https://sportdaylight.com/wp-content/uploads/2023/11/man-city-vs-Bournemouth-6-1-highlights-SPORTDAYLIGHT.COM_.mp4"
+var (
+	mp4_links []string
+	mutex     sync.Mutex
+)
 
-	// Build fileName from fullPath
-	fileURL, err := url.Parse(urlVideo)
-	if err != nil {
-		log.Fatal(err)
-	}
-	path := fileURL.Path
-	segments := strings.Split(path, "/")
-	fileName := path + segments[len(segments)-1]
+func _parseLinks(urls []string) map[string]string {
+	links := make(map[string]string)
 
-	var filePath string
-	//If theres no path, download file to user current path
-	if str, ok := folderPath.(string); ok {
-		filePath = str + fileName
-	} else {
-		filePath = ""
+	for _, url_aux := range urls {
+		url_temp := strings.ToLower(url_aux)
+		//all combinations of the words highlight
+		url_temp = strings.Split(url_temp, "-highlights")[0]
+		url_temp = strings.Split(url_temp, "-highlight")[0]
+		url_temp = strings.Split(url_temp, "-hіghlіghts")[0]
+		url_temp = strings.Split(url_temp, "/")[5]
+		url_temp = url_temp[0 : len(url_temp)-4]
+		links[url_temp] = url_aux
+	}
+	return links
+}
+
+func _scrapeLink(link string) {
+	c := colly.NewCollector()
+
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		if strings.HasSuffix(link, ".mp4") {
+			link, _ = url.QueryUnescape(link)
+			// Critical section
+			mutex.Lock()
+			mp4_links = append(mp4_links, link)
+			mutex.Unlock()
+		}
+	})
+
+	// Start scraping on the specific page
+	c.Visit(link)
+}
+
+func Scrape(url string, game string) {
+	links := make([]string, 0)
+
+	y, m, _ := time.Now().Date()
+	month := int(m)
+	year := strconv.Itoa(int(y))
+
+	for i := 1; i <= month; i++ {
+		if i <= 9 {
+			links = append(links, url+year+"/"+"0"+strconv.Itoa(i))
+		} else {
+			links = append(links, url+year+"/"+strconv.Itoa(i))
+		}
 	}
 
-	// Create blank file
-	file, err := os.Create(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	client := http.Client{
-		CheckRedirect: func(r *http.Request, via []*http.Request) error {
-			r.URL.Opaque = r.URL.Path
-			return nil
-		},
-	}
-	// Put content on file
-	resp, err := client.Get(urlVideo)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
+	var wg sync.WaitGroup
 
-	size, err := io.Copy(file, resp.Body)
-	if err != nil {
-		log.Fatal(err)
+	for _, link := range links {
+		wg.Add(1)
+		go func(link string) {
+			defer wg.Done()
+			_scrapeLink(link)
+		}(link)
 	}
 
-	defer file.Close()
+	wg.Wait()
 
-	fmt.Printf("Downloaded a file %s with size %d", fileName, size)
+	parsedLinks := _parseLinks(mp4_links)
+
+	keys := make([]string, 0, len(parsedLinks))
+	for key := range parsedLinks {
+		keys = append(keys, key)
+	}
+
+	game_converted := _parseGame(game)
+
+	// Closest match
+	bagSizes := []int{2}
+	cm := closestmatch.New(keys, bagSizes)
+	closest := cm.Closest(game_converted)
+	fmt.Println(cm.Closest(closest), "closest")
+
+	word_sim := utils.Distance_words_ratio(game_converted, closest)
+	if word_sim < 0.7 {
+		fmt.Println("No matching game")
+		return
+	}
+	fmt.Println(word_sim)
+
+	// Download the file
+	utils.Download_file("https://sportdaylight.com" + parsedLinks[closest])
 }
