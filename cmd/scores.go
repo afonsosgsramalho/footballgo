@@ -106,7 +106,7 @@ func getScoresLive() {
 	lines := make([]string, 0)
 
 	var matches datastructures.Match
-	err = json.Unmarshal(responseBytes, &matches) // Use = instead of :=
+	err = json.Unmarshal(responseBytes, &matches)
 	if err != nil {
 		log.Printf("Could not unmarshal response - %v", err)
 	}

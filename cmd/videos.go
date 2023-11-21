@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -17,6 +18,11 @@ import (
 )
 
 var videoFlag bool
+
+var (
+	mp4_links []string
+	mutex     sync.Mutex
+)
 
 // videosCmd represents the videos command
 var videosCmd = &cobra.Command{
@@ -28,7 +34,7 @@ var videosCmd = &cobra.Command{
 
 		if videoFlag {
 			gamearg := args[utils.IndexOf(args, "-v")+1]
-			scrapeMonth(gamearg)
+			scrape(gamearg)
 		}
 	},
 }
@@ -78,7 +84,7 @@ func parseGame(game string) string {
 	return gameString
 }
 
-func parseLinks(urls []string) map[string]string {
+func _parseLinks(urls []string) map[string]string {
 	links := make(map[string]string)
 
 	for _, url_aux := range urls {
@@ -94,7 +100,25 @@ func parseLinks(urls []string) map[string]string {
 	return links
 }
 
-func scrapeMonth(game string) {
+func _scrapeLink(link string) {
+	c := colly.NewCollector()
+
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		if strings.HasSuffix(link, ".mp4") {
+			link, _ = url.QueryUnescape(link)
+			// Critical section
+			mutex.Lock()
+			mp4_links = append(mp4_links, link)
+			mutex.Unlock()
+		}
+	})
+
+	// Start scraping on the specific page
+	c.Visit(link)
+}
+
+func scrape(game string) {
 	var searchString string = "https://sportdaylight.com/wp-content/uploads/"
 	links := make([]string, 0)
 
@@ -110,26 +134,21 @@ func scrapeMonth(game string) {
 		}
 	}
 
-	teste_url := "https://sportdaylight.com/wp-content/uploads/2023/11/"
-	mp4_links := make([]string, 0)
+	var wg sync.WaitGroup
 
-	// Instantiate default collector
-	c := colly.NewCollector()
+	for _, link := range links {
+		wg.Add(1)
+		go func(link string) {
+			defer wg.Done()
+			_scrapeLink(link)
+		}(link)
+	}
 
-	// On every a element which has href attribute call callback
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		if strings.HasSuffix(link, ".mp4") {
-			//unescape link
-			link, _ = url.QueryUnescape(link)
-			mp4_links = append(mp4_links, link)
-		}
-	})
+	wg.Wait()
 
-	// Start scraping on the specific page
-	c.Visit(teste_url)
+	fmt.Println(mp4_links)
 
-	parsedLinks := parseLinks(mp4_links)
+	parsedLinks := _parseLinks(mp4_links)
 
 	keys := make([]string, 0, len(parsedLinks))
 	for key := range parsedLinks {
