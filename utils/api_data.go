@@ -118,11 +118,18 @@ func GetLeagues() map[string]string {
 // TODO: cache the results, intead always querying API
 func ConvertClubId(club string) string {
 	clubs := GetClubs()
+	if clubs[club] == "" {
+		log.Fatalf("The club %s does not exist", club)
+	}
 	return clubs[club]
 }
 
 // TODO: cache the results, intead always querying API
 func ConvertCompetitionId(competition string) string {
 	competitions := GetLeagues()
+	if competitions[competition] == "" {
+		log.Fatalf("The competition %s does not exist", competition)
+	}
+
 	return competitions[competition]
 }

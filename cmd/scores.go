@@ -25,6 +25,10 @@ var scoresCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
 
+		if (len(args) == 0 && teamFlag == "") || (len(args) == 0 && daysFlag == "") || (len(args) == 0 && liveFlag) {
+			log.Fatal("You have to provide at least one argument")
+		}
+
 		if liveFlag {
 			getScoresLive()
 		}

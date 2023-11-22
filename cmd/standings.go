@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"footgo/internal/datastructures"
 	"footgo/utils"
-	"log"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -20,10 +19,6 @@ var standingsCmd = &cobra.Command{
 	Long:  `Get standings of particular league`,
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
-
-		if len(args) == 0 {
-			log.Fatal("You have to provide at least on argument")
-		}
 
 		if leagueFlag != "" {
 			competition := utils.ConvertCompetitionId(leagueFlag)

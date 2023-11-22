@@ -59,11 +59,25 @@ func Scrape(url string, game string) {
 	month := int(m)
 	year := strconv.Itoa(int(y))
 
-	for i := 1; i <= month; i++ {
-		if i <= 9 {
+	if month > 6 {
+		for i := 8; i <= month; i++ {
+			if i <= 9 {
+				links = append(links, url+year+"/"+"0"+strconv.Itoa(i))
+			} else {
+				links = append(links, url+year+"/"+strconv.Itoa(i))
+			}
+		}
+	} else {
+		year_ly := y - 1
+		for i := 6; i <= 12; i++ {
+			if i <= 9 {
+				links = append(links, url+strconv.Itoa(int(year_ly))+"/"+"0"+strconv.Itoa(i))
+			} else {
+				links = append(links, url+strconv.Itoa(int(year_ly))+"/"+strconv.Itoa(i))
+			}
+		}
+		for i := 1; i <= month; i++ {
 			links = append(links, url+year+"/"+"0"+strconv.Itoa(i))
-		} else {
-			links = append(links, url+year+"/"+strconv.Itoa(i))
 		}
 	}
 

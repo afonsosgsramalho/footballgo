@@ -23,6 +23,26 @@ func _parseGame(game string) string {
 		"whu": "West Ham",
 		"wol": "Wolves",
 		"shu": "Sheffield United",
+		//La Liga
+		"bar": "Barcelona",
+		"ala": "Alaves",
+		"rma": "Real Madrid",
+		"val": "Valencia",
+		"atb": "Athletic Bilbao",
+		"gir": "Girona",
+		"rso": "Real Sociedad",
+		"bet": "Real Betis",
+		"lpa": "Las Palmas",
+		"rav": "Rayo Vallecano",
+		"get": "Getafe",
+		"osa": "Osasuna",
+		"sev": "Sevilla",
+		"vil": "Villareal",
+		"cad": "Cadiz",
+		"mal": "Mallorca",
+		"cev": "Celta Vigo",
+		"gra": "Granada",
+		"alm": "Almeria",
 	}
 
 	homeTeam := teamNameMapping[game[0:3]]

@@ -21,8 +21,8 @@ var fixturesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.CreateHeader()
 
-		if len(args) == 0 {
-			log.Fatal("You have to provide at least on argument")
+		if (len(args) == 0 && leagueFlagFixtures == "") || (len(args) == 0 && teamFlagFixtures == "") {
+			log.Fatal("You have to provide at least one argument")
 		}
 
 		if leagueFlagFixtures != "" {
