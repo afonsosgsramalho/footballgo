@@ -106,14 +106,12 @@ func Scrape(url string, game string) {
 	bagSizes := []int{2}
 	cm := closestmatch.New(keys, bagSizes)
 	closest := cm.Closest(game_converted)
-	fmt.Println(cm.Closest(closest), "closest")
 
 	word_sim := utils.Distance_words_ratio(game_converted, closest)
 	if word_sim < 0.7 {
 		fmt.Println("No matching game")
 		return
 	}
-	fmt.Println(word_sim)
 
 	// Download the file
 	utils.Download_file("https://sportdaylight.com" + parsedLinks[closest])

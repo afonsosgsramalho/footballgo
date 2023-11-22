@@ -21,7 +21,6 @@ func Download_file(game_url string) {
 	path := fileURL.Path
 	segments := strings.Split(path, "/")
 	fileName := segments[len(segments)-1]
-	// filePath := "/home/vboxuser/Videos/" + fileName
 	filePath := fileName
 
 	// Create blank file
